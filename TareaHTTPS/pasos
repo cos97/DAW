@@ -1,0 +1,39 @@
+# Ir a un directorio seguro o crearlo:
+/etc/ssl/ssl_apache
+
+# Generar .key
+sudo openssl genrsa -des3 -out medac.key 2048
+pass -> apache
+
+# Crear clave certificado
+sudo openssl req -new -key medac.key -out medac.csr
+pass -> apache
+pais ->sp
+state -> andalucia - sp
+city -> malaga
+nom -> marcos
+email -> marcosmcdonal
+
+# Siguiente paso
+sudo openssl x509 -req -sha256 -days 365 -in medac.csr -signkey medac.key -out medac.crt
+
+# Ir a /etc/apache2/sites-avalible
+nano 000-default.conf
+cambiar puerto 80 a 443
+Añadir las siguientes lineas debajo de Documenroot
+SSLEngine on
+SSLCertificateFile /etc/ssl/ssl_apache/medac.crt
+SSLCertificateKeyFile /etc/ssl/ssl_apache/medac.key
+
+# Cambiar puerto de archivo /etc/apache2/ports.conf
+comentar linea Listen 80 y añadir Listen 443 y comentar el resto de Listen 443
+
+# Ejecutar comando para activar sslengine on
+sudo a2enmod ssl2
+
+# Para revertir a http
+Descomentar y comentar 80 y 443
+Comentar 
+SSLEngine on
+SSLCertificateFile /etc/ssl/ssl_apache/medac.crt
+SSLCertificateKeyFile /etc/ssl/ssl_apache/medac.key
