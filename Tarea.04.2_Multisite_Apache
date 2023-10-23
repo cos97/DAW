@@ -1,0 +1,67 @@
+Tarea.04.2 DAW: Multisite Apache
+
+# Crear las carpetas que desees en /var/www/.
+# Dentro de las carpetas, colocar los códigos. Por ejemplo:
+
+nano /var/www/carp1/index.html
+nano /var/www/carp2/index.html
+
+# Asignar los permisos al usuario (user) y al grupo (sudo) para las carpetas:
+
+chown -R user:sudo /var/www/carp1
+chown -R user:sudo /var/www/carp2
+
+# En el directorio /etc/apache2/sites-available/, crear archivos de configuración para cada sitio:
+
+sudo touch carp1.conf carp2.conf
+
+# Copiar la configuración predeterminada para cada sitio:
+
+cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/carp1.conf
+cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/carp2.conf
+
+# Editar ambos archivos de configuración (carp1.conf y carp2.conf) para especificar el nombre del servidor y la ruta del documento raíz:
+
+# En carp1.conf:
+
+ServerName carp1.apache.local
+DocumentRoot /var/www/carp1
+
+# En carp2.conf:
+
+ServerName carp2.apache.local
+DocumentRoot /var/www/carp2
+
+# Habilitar los sitios recién configurados:
+
+a2ensite carp1.conf
+a2ensite carp2.conf
+
+# Desactivar el sitio predeterminado:
+
+sudo a2dissite 000-default.conf
+
+# Reiniciar el servidor Apache para que los cambios surtan efecto:
+
+sudo systemctl restart apache2
+
+# Editar el archivo /etc/hosts para agregar las entradas DNS locales:
+
+sudo nano /etc/hosts
+
+# Agregar las siguientes líneas:
+
+192.168.1.95    carp.1.apache.local
+192.168.1.95    carp.2.apache.local
+
+# Para permitir la visualización de los sitios en otros navegadores o sistemas, en la máquina desde la que se desee ver con esos nombres, editar el archivo de hosts. Ejemplo en Windows (C:\Windows\System32\drivers\etc\hosts):
+
+
+192.168.1.95 carp.1.apache.local
+192.168.1.95 carp.2.apache.local
+
+# Para desactivar un sitio y dejar de servirlo, utiliza:
+
+sudo a2dissite carp1.conf
+sudo a2dissite carp2.conf
+sudo systemctl restart apache2
